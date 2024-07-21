@@ -37,7 +37,7 @@ st.title("Study Hours Comparison")
 st.write("## Add New Study Hours")
 with st.form("add_hours_form"):
     person = st.selectbox("Person", ["Belal Ahmed Siddiqui", "Shahzeb Uddin", "Abdul Rahman"])
-    hours = st.number_input("Hours", min_value=0, max_value=24, step=0.5)
+    hours = st.number_input("Hours", min_value=0, max_value=24, step=1)
     date_input = st.date_input("Date", value=date.today())
     submitted = st.form_submit_button("Add Hours")
     
