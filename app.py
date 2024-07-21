@@ -2,32 +2,29 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import date
-import os
-
-# Define file path
-FILE_PATH = '/content/study_hours.csv'  # Adjust this path if necessary
 
 # Function to load the data
 @st.cache_data
 def load_data():
-    if os.path.exists(FILE_PATH):
-        df = pd.read_csv(FILE_PATH)
+    try:
+        df = pd.read_csv('study_hours.csv')
         df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d', errors='coerce')
-    else:
+    except FileNotFoundError:
         df = pd.DataFrame(columns=['date', 'person', 'hours'])
+        df.to_csv('study_hours.csv', index=False)
     return df
 
-# Function to save data
+# Function to save the data
 def save_data(df):
-    df.to_csv(FILE_PATH, index=False)
+    df.to_csv('study_hours.csv', index=False)
 
 # Load the data
 if 'data' not in st.session_state:
     st.session_state['data'] = load_data()
 
 # Function to add new data
-def add_new_entry(new_entry):
-    new_df = pd.DataFrame(new_entry)
+def add_data(new_data):
+    new_df = pd.DataFrame(new_data)
     new_df['date'] = pd.to_datetime(new_df['date'], format='%Y-%m-%d', errors='coerce')
     updated_df = pd.concat([st.session_state['data'], new_df], ignore_index=True)
     save_data(updated_df)
@@ -46,7 +43,7 @@ with st.form("add_hours_form"):
     
     if submitted:
         new_entry = {'date': [date_input.strftime('%Y-%m-%d')], 'person': [person], 'hours': [hours]}
-        add_new_entry(new_entry)
+        add_data(new_entry)
         st.success("New study hours added!")
         st.experimental_rerun()
 
